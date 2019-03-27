@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ExtensionList>
+    <Extension Id="inv.gocart.panel">
+        <HostList>
+            <Host Name="ILST" Port="9092"/>
+            <Host Name="PHXS" Port="9093"/>
+        </HostList>
+    </Extension>
+</ExtensionList>
