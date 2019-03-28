@@ -56,6 +56,7 @@ export default {
       pattern: null,
       size: 256,
       previewPath: null,
+      optionsAreLoaded: false,
     },
     rx: {
       z: /\{z\}/i,
@@ -146,6 +147,7 @@ export default {
       console.log(this.settings);
       // this.runScript(`setPreviewPath('${this.root}/preview/')`)
       this.updateOptions();
+      this.optionsAreLoaded = true;
     },
     failedScan() {
       alert('Scan failed!')

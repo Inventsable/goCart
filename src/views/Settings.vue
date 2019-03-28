@@ -82,7 +82,7 @@ export default {
       },
       {
         label: 'path',
-        value: `C:/Users/TRSch/AppData/Roaming/Adobe/CEP/extensions/go-cart/src/preview`,
+        value: null,
         parent: 'midinputs',
         icon: 'folder',
         index: 1,
@@ -91,7 +91,7 @@ export default {
     smallinputs: [
       {
         label: 'mapTypeID',
-        value: `Terrain`,
+        value: null,
         parent: 'smallinputs',
         icon: 'folder',
         index: 0,
@@ -99,7 +99,7 @@ export default {
       },
       {
         label: 'keyword',
-        value: `Terrain`,
+        value: null,
         parent: 'smallinputs',
         icon: 'vpn_key',
         index: 1,
@@ -129,13 +129,48 @@ export default {
       return '.' + this.ext.toLowerCase();
     },
     allInputs() {
-      return [].concat(this.midinputs.push(this.sizeinput), this.smallinputs);
+      return [].concat(this.midinputs, this.smallinputs);
+    },
+    optionsAreLoaded() {
+      return this.app.optionsAreLoaded;
+    },
+  },
+  watch: {
+    optionsAreLoaded(state) {
+      console.log('Update settings now');
     }
   },
   mounted() {
-    console.log('Settings mounted')
+    console.log('Settings mounted');
+    if (!this.optionsAreLoaded) {
+      setTimeout(() => {
+        this.loadOptionsFromRoot();
+      }, 500);
+    } else {
+      this.loadOptionsFromRoot();
+    }
   },
   methods: {
+    realPath(path) {
+      if (path) {
+        let trailcheck = /[^\/|\\]$/;
+        if (trailcheck.test(path))
+          path = path + '/'
+        if (!this.app.macOS && path) {
+          return path.split('\\').join('\/');
+        } else {
+          return path;
+        }
+      } else {
+        return this.app.root + 'src/preview/'
+      }
+    },
+    loadOptionsFromRoot() {
+      this.allInputs.forEach((input) => {
+        input.value = this.app.storage.getItem(input.label);
+      })
+      this.sizeinputs[0].value = this.app.storage.getItem(this.sizeinputs[0].label);
+    },
     getExtSelection(name) {
       let match = null;
       this.exts.forEach(ext => {
@@ -166,8 +201,12 @@ export default {
       // // console.log(this.$root.$children[0].opts)
     },
     logValue(input) {
+      if (input.label == 'path') {
+        input.value = this.realPath(input.value);
+      }
       this.app.storage.setItem(input.label, input.value);
       console.log(`${input.label}: ${input.value}`);
+      console.log(window.localStorage)
     },
     getStorage() {
       
